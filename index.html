@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+</head>
+
+<body>
+    <style>
+        /* Body styles: center content and set background gradient */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
+            background-attachment: fixed;
+            margin: 0;
+        }
+
+        /* Title (H1) style with pulsing animation */
+        #myH1 {
+            font-size: 4rem;
+            font-family: monospace;
+            color: #fff;
+            animation: pulse 1s infinite alternate;
+        }
+
+        /* H1 hover effect: changes color and adds glowing text shadow */
+        #myH1:hover {
+            color: #00f0ff;
+            transform: scale(1.1);
+            text-shadow: 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+        }
+
+        /* Animation for pulsing effect on the title */
+        @keyframes pulse {
+            from {
+                color: #fff;
+                transform: scale(1);
+            }
+
+            to {
+                color: #00f0ff;
+                transform: scale(1.1);
+                text-shadow: 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+            }
+        }
+
+        /* Container styling for the stopwatch */
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            border: 5px solid;
+            border-radius: 30px;
+            background-color: #fbc2eb;
+        }
+
+        /* Time display styles */
+        #display {
+            font-size: 5rem;
+            font-family: monospace;
+            color: blue;
+            text-shadow: 2px 2px 2px hsla(0, 0%, 0%, 0.75);
+            margin-bottom: 25px;
+        }
+
+        /* Common styles for control buttons */
+        #controls button {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 10px 20px;
+            min-width: 125px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: beige;
+        }
+
+        /* Start button gradient and hover effect */
+        #startBtn {
+            background-image: linear-gradient(to right, #49a551 0%, #79CBCA 51%, #77A1D3 100%);
+            background-size: 200% auto;
+            transition: 0.5s;
+            box-shadow: 0 0 20px #eee;
+        }
+
+        #startBtn:hover {
+            background-position: right center;
+            color: #fff;
+        }
+
+        /* Stop button gradient and hover effect */
+        #stopBtn {
+            background-image: linear-gradient(to right, #9c5558 0%, #cbb879 51%, #d37d77 100%);
+            background-size: 200% auto;
+            transition: 0.5s;
+            box-shadow: 0 0 20px #eee;
+        }
+
+        #stopBtn:hover {
+            background-position: right center;
+            color: #fff;
+        }
+
+        /* Reset button gradient and hover effect */
+        #resetBtn {
+            background-image: linear-gradient(to right, #77A1D3 0%, #79CBCA 51%, #77A1D3 100%);
+            background-size: 200% auto;
+            transition: 0.5s;
+            box-shadow: 0 0 20px #eee;
+        }
+
+        #resetBtn:hover {
+            background-position: right center;
+            color: #fff;
+        }
+    </style>
+
+    <!-- Title of the stopwatch -->
+    <h1 id="myH1">Stopwatch</h1>
+
+    <!-- Stopwatch container -->
+    <div id="container">
+        <!-- Time display -->
+        <div id="display">00:00:00:00</div>
+
+        <!-- Control buttons -->
+        <div id="controls">
+            <button id="startBtn" onclick="start()">Start</button>
+            <button id="stopBtn" onclick="stop()">Stop</button>
+            <button id="resetBtn" onclick="reset()">Reset</button>
+        </div>
+    </div>
+
+    <script>
+        // Reference to the time display element
+        const display = document.getElementById("display");
+
+        // Variables to manage stopwatch state
+        let timer = null;        // Stores setInterval ID
+        let startTime = 0;       // The time when the stopwatch started
+        let elapsedTime = 0;     // Time passed since start
+        let isRunning = false;   // Flag: is the stopwatch running?
+
+        // Start the stopwatch
+        function start() {
+            if (!isRunning) {
+                // Set the start time to now minus any previously elapsed time
+                startTime = Date.now() - elapsedTime;
+                // Update the display every 10ms
+                timer = setInterval(update, 10);
+                isRunning = true;
+            }
+        }
+
+        // Stop / pause the stopwatch
+        function stop() {
+            if (isRunning) {
+                // Stop updating
+                clearInterval(timer);
+                // Update elapsed time so we can resume correctly
+                elapsedTime = Date.now() - startTime;
+                isRunning = false;
+            }
+        }
+
+        // Reset the stopwatch to 00:00:00:00
+        function reset() {
+            clearInterval(timer);
+            startTime = 0;
+            elapsedTime = 0;
+            isRunning = false;
+            display.textContent = "00:00:00:00";
+        }
+
+        // Update the stopwatch display
+        function update() {
+            // Calculate how much time has passed
+            const currentTime = Date.now();
+            elapsedTime = currentTime - startTime;
+
+            // Break down elapsed time into components
+            let hours = Math.floor(elapsedTime / (1000 * 60 * 60));
+            let minutes = Math.floor((elapsedTime / (1000 * 60)) % 60);
+            let seconds = Math.floor((elapsedTime / 1000) % 60);
+            let milliseconds = Math.floor((elapsedTime % 1000) / 10);
+
+            // Format components as 2-digit numbers
+            hours = String(hours).padStart(2, "0");
+            minutes = String(minutes).padStart(2, "0");
+            seconds = String(seconds).padStart(2, "0");
+            milliseconds = String(milliseconds).padStart(2, "0");
+
+            // Update the display text
+            display.textContent = `${hours}:${minutes}:${seconds}:${milliseconds}`;
+        }
+    </script>
+</body>
+
+</html>
